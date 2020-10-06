@@ -1,0 +1,398 @@
+---
+title: "Shiny Workshop"
+output: 
+  learnr::tutorial:
+    progressive: false
+    allow_skip: true
+    df_print: default
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+if(!("ggplot2" %in% rownames(installed.packages()))) {
+  install.packages("ggplot2")
+}
+
+library(learnr)
+library(tidyverse)
+library(knitr)
+library(shiny)
+```
+
+## Introduction
+
+ - Mike Kleinsasser, MS in Statistics
+
+ - R programmer for the Department of Biostatistics
+ 
+ - Consult faculty and students on R package development, optimization
+ 
+ - Give workshops to students on useful R tools
+   - First workshops this semester: Tidyverse Series
+
+ - Data Manipulation Workshop: Tuesday, September 15 at 5 p.m.
+   - Zoom link: https://umich.zoom.us/j/98858754267
+   - RSVP: https://www.eventbrite.com/e/data-manipulation-workshop-tickets-118357150423
+ - Data Visualization Workshop: Thursday, September 24 at 5 p.m.
+    - Zoom link: https://umich.zoom.us/j/98858754267
+    - RSVP: https://www.eventbrite.com/e/data-visualization-workshop-tickets-118360271759
+ - Shiny Workshop: Tuesday, October 6 at 5 p.m.
+    - Zoom link: https://umich.zoom.us/j/98858754267
+    - RSVP: https://www.eventbrite.com/e/shiny-workshop-tickets-118360693019
+ - Package Development 1: Thursday, October 15 at 5 p.m.
+    - Zoom link: https://umich.zoom.us/j/98858754267
+    - RSVP: https://www.eventbrite.com/e/package-development-1-tickets-118360891613
+ - Package Development 2: Tuesday, October 27 at 5 p.m.
+    - Zoom link: https://umich.zoom.us/j/98858754267
+    - RSVP: https://www.eventbrite.com/e/package-development-2-tickets-118361158411
+    
+Zoom join information:
+Mike Kleinsasser is inviting you to a scheduled Zoom meeting.
+
+Topic: R Workshops (Recurring)
+
+Join Zoom Meeting
+https://umich.zoom.us/j/98858754267
+
+Meeting ID: 988 5875 4267
+One tap mobile
++13017158592,,98858754267# US (Germantown)
++13126266799,,98858754267# US (Chicago)
+
+Dial by your location
+        +1 301 715 8592 US (Germantown)
+        +1 312 626 6799 US (Chicago)
+        +1 646 876 9923 US (New York)
+        +1 253 215 8782 US (Tacoma)
+        +1 346 248 7799 US (Houston)
+        +1 669 900 6833 US (San Jose)
+        +1 647 374 4685 Canada
+        +1 647 558 0588 Canada
+        +1 778 907 2071 Canada
+        +1 204 272 7920 Canada
+        +1 438 809 7799 Canada
+        +1 587 328 1099 Canada
+Meeting ID: 988 5875 4267
+Find your local number: https://umich.zoom.us/u/acTYHlRYm
+
+## Introduction to Shiny
+
+ - Install R package `Shiny` from CRAN: `install.packages("shiny")`
+  
+ - `Shiny` makes it easy to build web applications from R
+ 
+ - Package has 11 build-in examples showing off diverse features
+ 
+```{r e1, exercise=FALSE, eval=FALSE, echo=TRUE}
+library(shiny)
+runExample("01_hello")
+```
+
+ - you're expected to have an R session running with Shiny installed for this session
+ 
+ - also, install `quantmod` from CRAN for our extended example
+ 
+## What are the components of an app?
+
+ - Apps are made of two functions:
+ 
+ - 1. the server
+ 
+ - server is the engine of the app; it does the heavy lifting, e.g., computing the regression coefficients for a user specified model
+ 
+ - 2. the UI (user interface)
+
+ - the UI is what the user interacts with through keyboard and mouse input, .e.g., upload a data set to fit by opening a file explorer
+ 
+ - 3. and, a call to `shinyApp` function which simply takes the server and UI
+ 
+ - step 3. creates a Shiny app object from an explicit server/UI pair
+ 
+## Running an app
+
+ - R session will be busy while the app is running
+ 
+ - cannot run other R commands, why?
+ 
+ - Since web apps are interactive, R needs to monitor the UI for changes and
+  execute the app's reactions (more on this later)
+ 
+ - to kill the app, hit escape or click the stop sign icon
+ 
+ - A first app: (copy the code into your R session)
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+library(shiny) 
+ui <- fluidPage() 
+server <- function(input, output){} 
+shinyApp(ui = ui, server = server)
+```
+
+ - The app is blank!
+ 
+ - print ui the function, notice that it's just a wrapper for html
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+ui
+```
+
+## Reactive output
+
+ - the idea of a web app is to have a "live" quality
+ 
+ - reactive output is output that automatically responds when user toggles a widget
+ 
+ - Step 1. Add an R object to the UI
+ 
+ - Step 2. Instruct Shiny how to build the object from the server function. 
+ 
+ - the object is reactive if code that builds it calls a widget value
+
+ - this back and forth process creates the live quality
+
+## build the UI
+
+ - First, lay out the user interface
+ 
+ - add text, images, buttons, text boxes, etc.
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+library(shiny)
+
+# Define UI ----
+ui <- fluidPage(
+  
+)
+
+# Define server logic ----
+server <- function(input, output) {
+  
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
+```
+
+ - function `fluidPage` used to display a window that adjusts fluidly, so this
+ forms the basis of the UI
+ 
+ - to the fluid page below, add:
+ 
+ - 1. titlePanel with text
+ 
+ - 2. sidebarLayout, with: sidebarPanel and mainPanel (each with text)
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+ui = fluidPage(
+  titlePanel("THE APP"),
+  sidebarLayout(
+    sidebarPanel("sidebar"),
+    mainPanel("main panel content")
+  )
+)
+```
+
+## add control widgets
+
+ - a widget is a web element that users interact with
+ 
+ - Shiny widgets collect values from user and send them to the server
+ 
+ - Shiny comes with a family of widgets, but add on packages will give you
+ some more flexibility
+ 
+ - basic widget examples:
+ 
+ - buttons
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+actionButton()
+```
+
+ - checkboxes
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+checkboxInput()
+checkboxGroupInput()
+```
+ 
+ - numeric input
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+numericInput()
+```
+ 
+ - file input
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+fileInput()
+```
+ 
+ - select box
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+selectInput()
+```
+ 
+ - help text
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+helpText()
+```
+ 
+## Add R objects to UI
+
+ - family of functions to turn R objects into output for user interface
+ 
+ - examples:
+ 
+ - to render a data table,
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+dataTableOutput()
+```
+
+ - image
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+imageOutput()
+```
+
+ - plot
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+plotOutput()
+```
+
+ - table
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+tableOutput()
+```
+
+## Examples
+
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+# install packages ----
+install.packages(c('shiny', 'quantmod'))
+
+# Load packages ----
+library(shiny)
+library(quantmod)
+```
+
+ - Start with the basic app template:
+
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+# basic app ---- copy from cheat sheet
+library(shiny) 
+ui <- fluidPage() 
+server <- function(input, output){} 
+shinyApp(ui = ui, server = server)
+```
+
+ - Example 1. First, let's build a simple app that takes a numeric input n (`numericInput`), and draws a n random normal samples. Then, display a histogram of the draws by rendering the plot (`renderPlot`)
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+ui = fluidPage(
+  
+)
+server = function(input, output) {
+  
+}
+shinyApp(ui, server)
+```
+
+ - Example 2. Real time stock ticker app
+ 
+ - Starting with the UI for a stock visualizer app, 
+ 
+ - First, run it and assess the server components needed,
+ 
+ - Second, analyze the server:
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+library(quantmod)
+# Assembled UI
+ui = fluidPage(
+  titlePanel('Stock Vis'),
+  sidebarLayout(
+    sidebarPanel(
+      textInput('symb', 'Symbol', 'MSFT'),
+      dateRangeInput('dates', 'Date Range', start = '2018-01-01', end = as.character(Sys.Date())),
+      p(strong('Scale')),
+      checkboxInput('log', 'Plot y on the log scale', value = FALSE),
+      checkboxInput('adjust', 'Adjust prices for inflation', value = FALSE)
+    ),
+    mainPanel(
+      plotOutput('plot')
+    )
+  )
+)
+server = function(input, output) {
+}
+shinyApp(ui, server)
+```
+
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+# Server logic ----
+server <- function(input, output) {
+  
+  if (!exists(".inflation")) {
+  .inflation <- getSymbols('CPIAUCNS', src = 'FRED', 
+     auto.assign = FALSE)
+  }  
+
+# adjusts Google finance data with the monthly consumer price index 
+# values provided by the Federal Reserve of St. Louis
+# historical prices are returned in present values 
+  adjust <- function(data) {
+
+      latestcpi <- last(.inflation)[[1]]
+      inf.latest <- time(last(.inflation))
+      months <- split(data)               
+      
+      adjust_month <- function(month) {               
+        date <- substr(min(time(month[1]), inf.latest), 1, 7)
+        coredata(month) * latestcpi / .inflation[date][[1]]
+      }
+      
+      adjs <- lapply(months, adjust_month)
+      adj <- do.call("rbind", adjs)
+      axts <- xts(adj, order.by = time(data))
+      axts[ , 5] <- Vo(data)
+      axts
+  }    
+  
+  # grab data
+  # store it
+  dataInput = reactive({
+    req(input$symb != '')
+    getSymbols(input$symb, scr = 'yahoo',
+               from = input$dates[1], to = input$dates[2],
+               auto.assign = FALSE)
+  })
+  
+  # adjusts for inflation
+  finalInput = reactive({
+    if(!input$adjust) {
+      return(dataInput())
+    }
+    adjust(dataInput())
+  })
+  
+  output$plot = renderPlot({
+    chartSeries(finalInput(), name = input$symb, theme = chartTheme('white'), 
+                type = 'line', log.scale = FALSE, TA = NULL)
+  })
+}
+
+# Run the app
+shinyApp(ui, server)
+```
+
+ - Exercise: Modify the app to allow the user to select log scale for the plot,
+ currently the default is TRUE
+ 
