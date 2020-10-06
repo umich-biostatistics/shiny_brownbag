@@ -156,7 +156,23 @@ ui
  
  - Step 1. Add an R object to the UI
  
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+# Example, plot the R object called hist
+ui = fluidPage(
+  plotOutput("hist")
+)
+```
+ 
  - Step 2. Instruct Shiny how to build the object from the server function. 
+ 
+```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
+server = function(input, output) {
+  # update the R object called hist based on widget value
+  output$hist = renderPlot({
+    hist(input$data)
+  })
+}
+```
  
  - the object is reactive if code that builds it calls a widget value
 
@@ -203,13 +219,7 @@ shinyApp(ui = ui, server = server)
  - 2. sidebarLayout, with: sidebarPanel and mainPanel (each with text)
  
 ```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
-ui = fluidPage(
-  titlePanel("THE APP"),
-  sidebarLayout(
-    sidebarPanel("sidebar"),
-    mainPanel("main panel content")
-  )
-)
+ui = fluidPage()
 ```
 
 ## add control widgets
@@ -311,7 +321,7 @@ server <- function(input, output){}
 shinyApp(ui = ui, server = server)
 ```
 
- - Example 1. First, let's build a simple app that takes a numeric input n (`numericInput`), and draws a n random normal samples. Then, display a histogram of the draws by rendering the plot (`renderPlot`)
+ - Example 1. First, let's build a simple app that takes a numeric input n (`numericInput`), and draws n random normal samples. Then, display a histogram of the draws by rendering the plot (`renderPlot`)
  
 ```{r, exercise=FALSE, eval=FALSE, echo=TRUE}
 ui = fluidPage(
