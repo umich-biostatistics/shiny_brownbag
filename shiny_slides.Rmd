@@ -102,13 +102,21 @@ runExample("01_hello")
  
  - server is the engine of the app; it does the heavy lifting, e.g., computing the regression coefficients for a user specified model
  
+ - the server is implemented as a function with instructions on how to build and 
+ rebuild the R objects displayed in the UI
+ 
  - 2. the UI (user interface)
 
  - the UI is what the user interacts with through keyboard and mouse input, .e.g., upload a data set to fit by opening a file explorer
  
+ - also a function, but implemented as a set of nested R functions that assemble 
+ an HTML user interface for your app
+ 
  - 3. and, a call to `shinyApp` function which simply takes the server and UI
  
  - step 3. creates a Shiny app object from an explicit server/UI pair
+ 
+ - `shinyApp` combines the ui and server into a functional app
  
 ## Running an app
 
@@ -138,6 +146,8 @@ shinyApp(ui = ui, server = server)
 ui
 ```
 
+ - Note: the easiest way to share app is through shinyapps.io, a cloud based service from RStudio. The department has a standard plan, which is available for use by students and faculty
+
 ## Reactive output
 
  - the idea of a web app is to have a "live" quality
@@ -151,6 +161,14 @@ ui
  - the object is reactive if code that builds it calls a widget value
 
  - this back and forth process creates the live quality
+ 
+ - Add inputs to the UI with *Input() functions
+ 
+ - Add outputs to the UI with the *Output() functions
+ 
+ - Then, in the server, tell it how to render the output with:
+ 
+ - render*() functions
 
 ## build the UI
 
